@@ -1,30 +1,28 @@
+# adapted from:  https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/quickstart.py
+
+from __future__ import print_function
 from apiclient.discovery import build
-import json
-import pdb
+from httplib2 import Http
+from oauth2client import file, client, tools
 
-#service = build('api_name', 'api_version', ...)
-#collection = service.stamps()
-#nested_collection = service.featured().stamps()
-#request = collection.list(cents=5)
-#response = request.execute()
-#response = service.stamps().list(cents=5).execute()
-#print json.dumps(response, sort_keys=True, indent=4)
+# Setup the Gmail API
+SCOPES = 'https://www.googleapis.com/auth/gmail.readonly' #todo: use the read/write scope
+store = file.Storage('credentials.json') # a file to be created
+creds = store.get()
+if not creds or creds.invalid:
+    flow = client.flow_from_clientsecrets('client_id.json', SCOPES) # refers to the credentials file we downloaded
+    # this is throwing... oauth2client.clientsecrets.InvalidClientSecretsError: Missing property "redirect_uris" in a client type of "web".
+    # need to re-create the credentials file using "Other UI (Windows, cli)"
+    # after doing this, you should see Your browser has been opened to visit: https://accounts.google.com/o/oauth2/auth?client_id....
+    creds = tools.run_flow(flow, store)
+service = build('gmail', 'v1', http=creds.authorize(Http()))
 
-# what is the list of valid service names and versions though?
-# maybe let's try this to get started?
-#
-# service = build('gmail', 'v1')
-#
-#> googleapiclient.errors.HttpError: <HttpError 403 when requesting https://gmail.googleapis.com/$discovery/rest?version=1 returned "The request cannot be identified with a project. Please pass a valid API key with the request.">
-
-pdb.set_trace()
-
-# try again:
-service = build('gmail', 'v1')
-# fail again:
-#> google.auth.exceptions.DefaultCredentialsError: Could not automatically determine credentials. Please set GOOGLE_APPLICATION_CREDENTIALS or explicitly create credentials and re-run the application. For more information, please see https://developers.google.com/accounts/docs/application-default-credentials.
-# visiting the URL from the error message...
-# not helpful
-# found a google sheets example at _______ like:
-
-# or actually follow the instructions at: https://developers.google.com/gmail/api/quickstart/python
+# Call the Gmail API
+results = service.users().labels().list(userId='me').execute()
+labels = results.get('labels', [])
+if not labels:
+    print('No labels found.')
+else:
+    print('Labels:')
+    for label in labels:
+        print(label['name'])

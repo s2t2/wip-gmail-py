@@ -11,6 +11,7 @@
   + https://github.com/google/google-api-python-client/blob/master/googleapiclient/discovery.py#L168-L233
   + https://cloud.google.com/docs/authentication/getting-started
   + https://developers.google.com/gmail/api/quickstart/python
+  + https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/quickstart.py
 
 ## Setup
 
@@ -30,7 +31,9 @@ Retry:
   5. Fill in the info for "Set up the OAuth 2.0 consent screen" and click to proceed.
   6. Note the `Client ID`. Then download the entire credentials JSON file (`client_id.json`), and move it into the root directory of this repository. NOTE: this credentials file is/should be ignored/excluded from version control.
 
+Then you should be able to see your app at https://console.developers.google.com/apis/credentials.
 
+From https://console.developers.google.com/apis/library, search for "Gmail" then click "Enable".
 
 
 
